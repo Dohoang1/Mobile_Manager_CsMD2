@@ -13,7 +13,6 @@ public class DataManagement {
     private static ArrayList<Charger> chargers = new ArrayList<>();
     private static ArrayList<MobileCase> mobileCases = new ArrayList<>();
 
-    // Getters
     public static ArrayList<Customer> getCustomers() {
         return customers;
     }

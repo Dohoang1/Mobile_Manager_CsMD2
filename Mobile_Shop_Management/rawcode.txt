@@ -70,9 +70,10 @@ public class Customer {
     }
 }
 
+
 package Entities;
 
-public class Charger extends Product{
+public class Charger extends Product {
     private String cableType;
     private String cableLength;
 
@@ -102,12 +103,12 @@ public class Charger extends Product{
         private String cableType;
         private String cableLength;
 
-        public Builder cableType(String cableType) {
+        public Builder setCableType(String cableType) {
             this.cableType = cableType;
             return this;
         }
 
-        public Builder cableLength(String cableLength) {
+        public Builder setCableLength(String cableLength) {
             this.cableLength = cableLength;
             return this;
         }
@@ -133,9 +134,10 @@ public class Charger extends Product{
     }
 }
 
+
 package Entities;
 
-public class Mobile extends Product{
+public class Mobile extends Product {
     private String os;
 
     private Mobile(Builder builder) {
@@ -154,7 +156,7 @@ public class Mobile extends Product{
     public static class Builder extends Product.Builder<Builder> {
         private String os;
 
-        public Builder os(String os) {
+        public Builder setOs(String os) {
             this.os = os;
             return this;
         }
@@ -178,7 +180,7 @@ public class Mobile extends Product{
 
 package Entities;
 
-public class MobileCase extends Product{
+public class MobileCase extends Product {
     private String useFor;
 
     private MobileCase(Builder builder) {
@@ -197,7 +199,7 @@ public class MobileCase extends Product{
     public static class Builder extends Product.Builder<Builder> {
         private String useFor;
 
-        public Builder useFor(String useFor) {
+        public Builder setUseFor(String useFor) {
             this.useFor = useFor;
             return this;
         }
@@ -222,8 +224,11 @@ public class MobileCase extends Product{
     }
 }
 
-
 package Entities;
+
+import java.util.Objects;
+
+import static Service.CurrencyFormatter.formatToVND;
 
 public abstract class Product {
     private String name;
@@ -309,37 +314,37 @@ public abstract class Product {
         protected int stock;
         protected String status;
 
-        public T name(String name) {
+        public T setName(String name) {
             this.name = name;
             return (T) this;
         }
 
-        public T brand(String brand) {
+        public T setBrand(String brand) {
             this.brand = brand;
             return (T) this;
         }
 
-        public T id(String id) {
+        public T setId(String id) {
             this.id = id;
             return (T) this;
         }
 
-        public T color(String color) {
+        public T setColor(String color) {
             this.color = color;
             return (T) this;
         }
 
-        public T price(int price) {
+        public T setPrice(int price) {
             this.price = price;
             return (T) this;
         }
 
-        public T stock(int stock) {
+        public T setStock(int stock) {
             this.stock = stock;
             return (T) this;
         }
 
-        public T status(String status) {
+        public T setStatus(String status) {
             this.status = status;
             return (T) this;
         }
@@ -354,7 +359,7 @@ public abstract class Product {
                 ", brand='" + brand + '\'' +
                 ", ID='" + id + '\'' +
                 ", color='" + color + '\'' +
-                ", price=" + price +
+                ", price=" + formatToVND(price) +
                 ", stock=" + stock +
                 ", status='" + status + '\'' +
                 '}';
@@ -362,6 +367,19 @@ public abstract class Product {
 
     public String toCSV() {
         return name + "," + brand + "," + id + "," + color + "," + price + "," + stock + "," + status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
 
@@ -377,15 +395,15 @@ public class ChargerFactory extends ProductFactory {
     public Product createProduct(Scanner input) {
         System.out.println("Add new Charger");
         return new Charger.Builder()
-                .name(promptForInput(input, "Enter name:"))
-                .brand(promptForInput(input, "Enter brand:"))
-                .id(promptForInput(input, "Enter ID:"))
-                .color(promptForInput(input, "Enter color:"))
-                .price(Integer.parseInt(promptForInput(input, "Enter price:")))
-                .stock(Integer.parseInt(promptForInput(input, "Enter stock:")))
-                .status(promptForInput(input, "Enter status:"))
-                .cableType(promptForInput(input, "Enter cable type:"))
-                .cableLength(promptForInput(input, "Enter cable length:"))
+                .setName(promptForInput(input, "Enter name:"))
+                .setBrand(promptForInput(input, "Enter brand:"))
+                .setId(promptForInput(input, "Enter ID:"))
+                .setColor(promptForInput(input, "Enter color:"))
+                .setPrice(Integer.parseInt(promptForInput(input, "Enter price:")))
+                .setStock(Integer.parseInt(promptForInput(input, "Enter stock:")))
+                .setStatus(promptForInput(input, "Enter status:"))
+                .setCableType(promptForInput(input, "Enter cable type:"))
+                .setCableLength(promptForInput(input, "Enter cable length:"))
                 .build();
     }
 }
@@ -402,14 +420,14 @@ public class MobileCaseFactory extends ProductFactory {
     public Product createProduct(Scanner input) {
         System.out.println("Add new MobileCase");
         return new MobileCase.Builder()
-                .name(promptForInput(input, "Enter name:"))
-                .brand(promptForInput(input, "Enter brand:"))
-                .id(promptForInput(input, "Enter ID:"))
-                .color(promptForInput(input, "Enter color:"))
-                .price(Integer.parseInt(promptForInput(input, "Enter price:")))
-                .stock(Integer.parseInt(promptForInput(input, "Enter stock:")))
-                .status(promptForInput(input, "Enter status:"))
-                .useFor(promptForInput(input, "Enter mobile suit:"))
+                .setName(promptForInput(input, "Enter name:"))
+                .setBrand(promptForInput(input, "Enter brand:"))
+                .setId(promptForInput(input, "Enter ID:"))
+                .setColor(promptForInput(input, "Enter color:"))
+                .setPrice(Integer.parseInt(promptForInput(input, "Enter price:")))
+                .setStock(Integer.parseInt(promptForInput(input, "Enter stock:")))
+                .setStatus(promptForInput(input, "Enter status:"))
+                .setUseFor(promptForInput(input, "Enter mobile suit:"))
                 .build();
     }
 }
@@ -426,14 +444,14 @@ public class MobileFactory extends ProductFactory {
     public Product createProduct(Scanner input) {
         System.out.println("Add new Mobile");
         return new Mobile.Builder()
-                .name(promptForInput(input, "Enter name:"))
-                .brand(promptForInput(input, "Enter brand:"))
-                .id(promptForInput(input, "Enter ID:"))
-                .color(promptForInput(input, "Enter color:"))
-                .price(Integer.parseInt(promptForInput(input, "Enter price:")))
-                .stock(Integer.parseInt(promptForInput(input, "Enter stock:")))
-                .status(promptForInput(input, "Enter status:"))
-                .os(promptForInput(input, "Enter OS:"))
+                .setName(promptForInput(input, "Enter name:"))
+                .setBrand(promptForInput(input, "Enter brand:"))
+                .setId(promptForInput(input, "Enter ID:"))
+                .setColor(promptForInput(input, "Enter color:"))
+                .setPrice(Integer.parseInt(promptForInput(input, "Enter price:")))
+                .setStock(Integer.parseInt(promptForInput(input, "Enter stock:")))
+                .setStatus(promptForInput(input, "Enter status:"))
+                .setOs(promptForInput(input, "Enter OS:"))
                 .build();
     }
 }
@@ -445,6 +463,7 @@ import Entities.Product;
 import java.util.Scanner;
 
 public abstract class ProductFactory {
+
     public abstract Product createProduct(Scanner input);
 
     protected String promptForInput(Scanner input, String prompt) {
@@ -453,9 +472,17 @@ public abstract class ProductFactory {
     }
 }
 
-package Management;
+package Main;
 
-import Service.CustomerService;
+import Management.ApplicationManager;
+
+public class Main {
+    public static void main(String[] args) {
+        ApplicationManager.run();
+    }
+}
+
+package Management;
 import Service.FileService;
 
 public class ApplicationManager {
@@ -485,7 +512,7 @@ public class ApplicationManager {
                 dataManagement.getChargers(),
                 dataManagement.getMobileCases()
         );
-        CustomerService.readCustomersFromCSV(dataManagement.getCustomers());
+        FileService.readCustomersFromCSV(dataManagement.getCustomers());
     }
 
     private static void runMainMenu() {
@@ -498,7 +525,7 @@ public class ApplicationManager {
                 dataManagement.getChargers(),
                 dataManagement.getMobileCases()
         );
-        CustomerService.writeCustomersToCSV(dataManagement.getCustomers());
+        FileService.writeCustomersToCSV(dataManagement.getCustomers());
     }
 }
 
@@ -517,7 +544,6 @@ public class DataManagement {
     private static ArrayList<Charger> chargers = new ArrayList<>();
     private static ArrayList<MobileCase> mobileCases = new ArrayList<>();
 
-    // Getters
     public static ArrayList<Customer> getCustomers() {
         return customers;
     }
@@ -569,6 +595,8 @@ import Entities.Product;
 import Service.*;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class MenuUI {
@@ -650,7 +678,7 @@ public class MenuUI {
         Customer customer = CustomerService.findCustomerByUsername(customers, username);
         if (customer != null && customer.getPassword().equals(password)) {
             System.out.println("Login successful. Welcome " + username + "!");
-            customerMenu();
+            customerMenu(customer);
         } else {
             System.out.println("Invalid username or password. Please try again.");
         }
@@ -670,7 +698,7 @@ public class MenuUI {
         }
     }
 
-    private void customerMenu() {
+    private void customerMenu(Customer customer) {
         ArrayList<Product> cart = new ArrayList<>();
         int choice;
         do {
@@ -679,6 +707,7 @@ public class MenuUI {
             System.out.println("2. Add Product to Cart");
             System.out.println("3. Show Cart");
             System.out.println("4. Checkout");
+            System.out.println("5. View Purchase History");
             System.out.println("0. Logout");
             System.out.print("Please choose an option: ");
             choice = getIntInput();
@@ -693,7 +722,10 @@ public class MenuUI {
                     CartService.showCart(cart);
                     break;
                 case 4:
-                    CartService.checkout(cart, mobiles, chargers, mobileCases);
+                    CartService.checkout(cart, mobiles, chargers, mobileCases, customer);
+                    break;
+                case 5:
+                    viewCustomerPurchaseHistory(customer.getUsername());
                     break;
                 case 0:
                     System.out.println("Logging out...");
@@ -712,6 +744,7 @@ public class MenuUI {
             System.out.println("2. Delete Product");
             System.out.println("3. Edit Product");
             System.out.println("4. Show all Products");
+            System.out.println("5. View All Customers' Purchase History");
             System.out.println("0. Exit");
             choice = getIntInput();
             switch (choice) {
@@ -727,6 +760,9 @@ public class MenuUI {
                 case 4:
                     ProductManagement.showAllProducts(mobiles, chargers, mobileCases);
                     break;
+                case 5:
+                    viewAllCustomersPurchaseHistory();
+                    break;
                 case 0:
                     return;
                 default:
@@ -734,6 +770,7 @@ public class MenuUI {
             }
         } while (choice != 0);
     }
+
 
     void addNewProductMenu() {
         System.out.println("Add new Product");
@@ -839,6 +876,43 @@ public class MenuUI {
             System.out.println("------------------------------");
         }
     }
+
+    private void viewCustomerPurchaseHistory(String username) {
+        Map<String, List<String>> history = PurchaseHistoryService.getCustomerPurchaseHistory(username);
+        if (history.isEmpty() || !history.containsKey(username)) {
+            System.out.println("No purchase history found for " + username);
+        } else {
+            System.out.println("===== Purchase History =====");
+            System.out.println("Name: " + username);
+            List<String> entries = history.get(username);
+            for (String entry : entries) {
+                System.out.println(entry);
+            }
+            if (history.containsKey("Total")) {
+                System.out.println("Total purchased: " + history.get("Total").get(0));
+            }
+        }
+    }
+
+    private void viewAllCustomersPurchaseHistory() {
+        Map<String, Map<String, List<String>>> allHistory = PurchaseHistoryService.getAllCustomersPurchaseHistory();
+        if (allHistory.isEmpty()) {
+            System.out.println("No purchase history found for any customer.");
+        } else {
+            System.out.println("===== All Customers' Purchase History =====");
+            for (Map.Entry<String, Map<String, List<String>>> customerEntry : allHistory.entrySet()) {
+                String username = customerEntry.getKey();
+                Map<String, List<String>> history = customerEntry.getValue();
+                System.out.println("Name: " + username);
+                List<String> entries = history.get(username);
+                for (String entry : entries) {
+                    System.out.println(entry);
+                }
+                System.out.println("Total purchased: " + history.get("Total").get(0));
+                System.out.println();
+            }
+        }
+    }
 }
 
 package Management;
@@ -924,11 +998,14 @@ public class ProductManagement {
 
 package Service;
 
+import Controller.Customer;
 import Entities.Product;
 import Entities.Mobile;
 import Entities.Charger;
 import Entities.MobileCase;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class CartService {
@@ -991,37 +1068,70 @@ public class CartService {
         if (cart.isEmpty()) {
             System.out.println("Your cart is empty.");
         } else {
-            double totalAmount = 0;
-            System.out.println("===== Your Cart =====");
+            Map<Product, Integer> productCounts = new HashMap<>();
+            double cartTotal = 0;
+
             for (Product product : cart) {
-                System.out.println(product);
-                totalAmount += product.getPrice();
+                productCounts.put(product, productCounts.getOrDefault(product, 0) + 1);
+                cartTotal += product.getPrice();
             }
-            System.out.println("Total Amount: " + CurrencyFormatter.formatToVND(totalAmount));
+
+            for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
+                Product product = entry.getKey();
+                int amount = entry.getValue();
+                double totalForProduct = product.getPrice() * amount;
+
+                System.out.printf("Products: %s - Price: %s - Amount: %d; Total: %s%n",
+                        product.getName(),
+                        CurrencyFormatter.formatToVND(product.getPrice()),
+                        amount,
+                        CurrencyFormatter.formatToVND(totalForProduct));
+            }
+
+            System.out.println("Cart total: " + CurrencyFormatter.formatToVND(cartTotal));
         }
     }
 
-    public static void checkout(ArrayList<Product> cart, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+    public static void checkout(ArrayList<Product> cart, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases, Customer customer) {
         if (cart.isEmpty()) {
             System.out.println("Your cart is empty. Please add products to your cart before checking out.");
         } else {
-            double totalAmount = 0;
             System.out.println("===== Checkout =====");
+            Map<Product, Integer> productCounts = new HashMap<>();
+            double cartTotal = 0;
+
             for (Product product : cart) {
-                System.out.println(product);
-                totalAmount += product.getPrice();
+                productCounts.put(product, productCounts.getOrDefault(product, 0) + 1);
+                cartTotal += product.getPrice();
             }
-            System.out.println("Total Amount: " + CurrencyFormatter.formatToVND(totalAmount));
+
+            for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
+                Product product = entry.getKey();
+                int amount = entry.getValue();
+                double totalForProduct = product.getPrice() * amount;
+
+                System.out.printf("Products: %s - Price: %s - Amount: %d; Total: %s%n",
+                        product.getName(),
+                        CurrencyFormatter.formatToVND(product.getPrice()),
+                        amount,
+                        CurrencyFormatter.formatToVND(totalForProduct));
+            }
+
+            System.out.println("Cart total: " + CurrencyFormatter.formatToVND(cartTotal));
+
             Scanner scanner = new Scanner(System.in);
             System.out.print("Proceed to checkout? (yes/no): ");
             String confirm = scanner.nextLine();
             if (confirm.equalsIgnoreCase("yes")) {
-                for (Product cartProduct : cart) {
+                for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
+                    Product cartProduct = entry.getKey();
+                    int amount = entry.getValue();
                     Product stockProduct = findProductInStock(cartProduct, mobiles, chargers, mobileCases);
                     if (stockProduct != null) {
-                        stockProduct.setStock(stockProduct.getStock() - 1);
+                        stockProduct.setStock(stockProduct.getStock() - amount);
                     }
                 }
+                PurchaseHistoryService.addPurchaseToHistory(customer, new ArrayList<>(productCounts.keySet()), cartTotal);
                 System.out.println("Checkout complete. Thank you for your purchase!");
                 cart.clear();
                 FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
@@ -1098,39 +1208,13 @@ public class CurrencyFormatter {
 package Service;
 
 import Controller.Customer;
-import java.io.*;
 import java.util.ArrayList;
 
 public class CustomerService {
-    private static final String CUSTOMER_CSV_FILE_PATH = "customers.csv";
-
-    public static void readCustomersFromCSV(ArrayList<Customer> customers) {
-        customers.clear();
-        try (BufferedReader br = new BufferedReader(new FileReader(CUSTOMER_CSV_FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                customers.add(new Customer(values[0], values[1]));
-            }
-        } catch (IOException e) {
-            System.out.println("No existing customer data found. Starting with an empty customer list.");
-        }
-    }
-
-    public static void writeCustomersToCSV(ArrayList<Customer> customers) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(CUSTOMER_CSV_FILE_PATH))) {
-            for (Customer customer : customers) {
-                bw.write(customer.getUsername() + "," + customer.getPassword());
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void addCustomer(ArrayList<Customer> customers, String username, String password) {
         customers.add(new Customer(username, password));
-        writeCustomersToCSV(customers);
+        FileService.writeCustomersToCSV(customers);
     }
 
     public static Customer findCustomerByUsername(ArrayList<Customer> customers, String username) {
@@ -1145,6 +1229,7 @@ public class CustomerService {
 
 package Service;
 
+import Controller.Customer;
 import Entities.Mobile;
 import Entities.Charger;
 import Entities.MobileCase;
@@ -1153,6 +1238,7 @@ import java.util.ArrayList;
 
 public class FileService {
     private static final String CSV_FILE_PATH = "products.csv";
+    private static final String CUSTOMERS_CSV_FILE_PATH = "customers.csv";
 
     public static void readProductsFromCSV(ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
         mobiles.clear();
@@ -1166,45 +1252,45 @@ public class FileService {
                 switch (type) {
                     case "Mobile":
                         mobiles.add(new Mobile.Builder()
-                                .name(values[1])
-                                .brand(values[2])
-                                .id(values[3])
-                                .color(values[4])
-                                .price(Integer.parseInt(values[5]))
-                                .stock(Integer.parseInt(values[6]))
-                                .status(values[7])
-                                .os(values[8])
+                                .setName(values[1])
+                                .setBrand(values[2])
+                                .setId(values[3])
+                                .setColor(values[4])
+                                .setPrice(Integer.parseInt(values[5]))
+                                .setStock(Integer.parseInt(values[6]))
+                                .setStatus(values[7])
+                                .setOs(values[8])
                                 .build());
                         break;
                     case "Charger":
                         chargers.add(new Charger.Builder()
-                                .name(values[1])
-                                .brand(values[2])
-                                .id(values[3])
-                                .color(values[4])
-                                .price(Integer.parseInt(values[5]))
-                                .stock(Integer.parseInt(values[6]))
-                                .status(values[7])
-                                .cableType(values[8])
-                                .cableLength(values[9])
+                                .setName(values[1])
+                                .setBrand(values[2])
+                                .setId(values[3])
+                                .setColor(values[4])
+                                .setPrice(Integer.parseInt(values[5]))
+                                .setStock(Integer.parseInt(values[6]))
+                                .setStatus(values[7])
+                                .setCableType(values[8])
+                                .setCableLength(values[9])
                                 .build());
                         break;
                     case "MobileCase":
                         mobileCases.add(new MobileCase.Builder()
-                                .name(values[1])
-                                .brand(values[2])
-                                .id(values[3])
-                                .color(values[4])
-                                .price(Integer.parseInt(values[5]))
-                                .stock(Integer.parseInt(values[6]))
-                                .status(values[7])
-                                .useFor(values[8])
+                                .setName(values[1])
+                                .setBrand(values[2])
+                                .setId(values[3])
+                                .setColor(values[4])
+                                .setPrice(Integer.parseInt(values[5]))
+                                .setStock(Integer.parseInt(values[6]))
+                                .setStatus(values[7])
+                                .setUseFor(values[8])
                                 .build());
                         break;
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("No existing products data found. Starting with an empty product list.");
         }
     }
 
@@ -1220,6 +1306,30 @@ public class FileService {
             }
             for (MobileCase mobileCase : mobileCases) {
                 bw.write("MobileCase," + mobileCase.toCSV());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void readCustomersFromCSV(ArrayList<Customer> customers) {
+        customers.clear();
+        try (BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS_CSV_FILE_PATH))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                customers.add(new Customer(values[0], values[1]));
+            }
+        } catch (IOException e) {
+            System.out.println("No existing customers data found. Starting with an empty customer list.");
+        }
+    }
+
+    public static void writeCustomersToCSV(ArrayList<Customer> customers) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(CUSTOMERS_CSV_FILE_PATH))) {
+            for (Customer customer : customers) {
+                bw.write(customer.getUsername() + "," + customer.getPassword());
                 bw.newLine();
             }
         } catch (IOException e) {
@@ -1353,13 +1463,101 @@ public class ProductService {
     }
 }
 
+package Service;
 
-package Main;
+import Controller.Customer;
+import Entities.Product;
 
-import Management.ApplicationManager;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-public class Main {
-    public static void main(String[] args) {
-        ApplicationManager.run();
+public class PurchaseHistoryService {
+    private static final String PURCHASE_HISTORY_FILE = "purchase_history.csv";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static void addPurchaseToHistory(Customer customer, List<Product> products, double totalAmount) {
+        LocalDateTime purchaseDate = LocalDateTime.now();
+        StringBuilder purchaseRecord = new StringBuilder();
+        purchaseRecord.append(String.format("%s,%s,", customer.getUsername(), purchaseDate.format(DATE_FORMATTER)));
+
+        Map<Product, Integer> productCounts = new HashMap<>();
+        for (Product product : products) {
+            productCounts.put(product, productCounts.getOrDefault(product, 0) + 1);
+        }
+
+        for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
+            Product product = entry.getKey();
+            int count = entry.getValue();
+            purchaseRecord.append(String.format("%s:%d:%d;", product.getName(), product.getPrice(), count));
+        }
+        purchaseRecord.append(String.format(",%.2f", totalAmount));
+
+        try (FileWriter fw = new FileWriter(PURCHASE_HISTORY_FILE, true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            out.println(purchaseRecord);
+        } catch (IOException e) {
+            System.out.println("Error writing to purchase history file: " + e.getMessage());
+        }
+    }
+
+    public static Map<String, List<String>> getCustomerPurchaseHistory(String username) {
+        Map<String, List<String>> history = new LinkedHashMap<>();
+        double totalPurchased = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(PURCHASE_HISTORY_FILE))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2 && parts[0].equals(username)) {
+                    String date = parts[1];
+                    StringBuilder entry = new StringBuilder();
+                    entry.append(String.format("Date: %s - Products: ", date));
+
+                    double total = 0;
+                    if (parts.length >= 3) {
+                        String[] products = parts[2].split(";");
+                        for (String product : products) {
+                            String[] productInfo = product.split(":");
+                            if (productInfo.length >= 3) {
+                                entry.append(String.format("%s - Price: %s - Amount: %s; ",
+                                        productInfo[0],
+                                        CurrencyFormatter.formatToVND(Double.parseDouble(productInfo[1])),
+                                        productInfo[2]));
+                            }
+                        }
+                    }
+
+                    if (parts.length >= 4) {
+                        total = Double.parseDouble(parts[3]);
+                    }
+
+                    totalPurchased += total;
+                    entry.append(String.format("Total: %s", CurrencyFormatter.formatToVND(total)));
+
+                    history.computeIfAbsent(username, k -> new ArrayList<>()).add(entry.toString());
+                }
+            }
+            history.put("Total", Collections.singletonList(CurrencyFormatter.formatToVND(totalPurchased)));
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error reading purchase history file: " + e.getMessage());
+        }
+        return history;
+    }
+
+    public static Map<String, Map<String, List<String>>> getAllCustomersPurchaseHistory() {
+        Map<String, Map<String, List<String>>> allHistory = new LinkedHashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(PURCHASE_HISTORY_FILE))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 4);
+                String username = parts[0];
+                allHistory.putIfAbsent(username, getCustomerPurchaseHistory(username));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading purchase history file: " + e.getMessage());
+        }
+        return allHistory;
     }
 }

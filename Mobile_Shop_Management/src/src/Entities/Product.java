@@ -1,5 +1,9 @@
 package Entities;
 
+import java.util.Objects;
+
+import static Service.CurrencyFormatter.formatToVND;
+
 public abstract class Product {
     private String name;
     private String brand;
@@ -129,7 +133,7 @@ public abstract class Product {
                 ", brand='" + brand + '\'' +
                 ", ID='" + id + '\'' +
                 ", color='" + color + '\'' +
-                ", price=" + price +
+                ", price=" + formatToVND(price) +
                 ", stock=" + stock +
                 ", status='" + status + '\'' +
                 '}';
@@ -137,5 +141,18 @@ public abstract class Product {
 
     public String toCSV() {
         return name + "," + brand + "," + id + "," + color + "," + price + "," + stock + "," + status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

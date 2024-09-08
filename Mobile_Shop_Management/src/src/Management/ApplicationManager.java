@@ -1,6 +1,4 @@
 package Management;
-
-import Service.CustomerService;
 import Service.FileService;
 
 public class ApplicationManager {
@@ -30,7 +28,7 @@ public class ApplicationManager {
                 dataManagement.getChargers(),
                 dataManagement.getMobileCases()
         );
-        CustomerService.readCustomersFromCSV(dataManagement.getCustomers());
+        FileService.readCustomersFromCSV(dataManagement.getCustomers());
     }
 
     private static void runMainMenu() {
@@ -43,6 +41,6 @@ public class ApplicationManager {
                 dataManagement.getChargers(),
                 dataManagement.getMobileCases()
         );
-        CustomerService.writeCustomersToCSV(dataManagement.getCustomers());
+        FileService.writeCustomersToCSV(dataManagement.getCustomers());
     }
 }

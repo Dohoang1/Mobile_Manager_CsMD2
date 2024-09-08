@@ -9,6 +9,8 @@ import Entities.Product;
 import Service.*;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class MenuUI {
@@ -90,7 +92,7 @@ public class MenuUI {
         Customer customer = CustomerService.findCustomerByUsername(customers, username);
         if (customer != null && customer.getPassword().equals(password)) {
             System.out.println("Login successful. Welcome " + username + "!");
-            customerMenu();
+            customerMenu(customer);
         } else {
             System.out.println("Invalid username or password. Please try again.");
         }
@@ -110,7 +112,7 @@ public class MenuUI {
         }
     }
 
-    private void customerMenu() {
+    private void customerMenu(Customer customer) {
         ArrayList<Product> cart = new ArrayList<>();
         int choice;
         do {
@@ -119,6 +121,7 @@ public class MenuUI {
             System.out.println("2. Add Product to Cart");
             System.out.println("3. Show Cart");
             System.out.println("4. Checkout");
+            System.out.println("5. View Purchase History");
             System.out.println("0. Logout");
             System.out.print("Please choose an option: ");
             choice = getIntInput();
@@ -133,7 +136,10 @@ public class MenuUI {
                     CartService.showCart(cart);
                     break;
                 case 4:
-                    CartService.checkout(cart, mobiles, chargers, mobileCases);
+                    CartService.checkout(cart, mobiles, chargers, mobileCases, customer);
+                    break;
+                case 5:
+                    viewCustomerPurchaseHistory(customer.getUsername());
                     break;
                 case 0:
                     System.out.println("Logging out...");
@@ -152,6 +158,7 @@ public class MenuUI {
             System.out.println("2. Delete Product");
             System.out.println("3. Edit Product");
             System.out.println("4. Show all Products");
+            System.out.println("5. View All Customers' Purchase History");
             System.out.println("0. Exit");
             choice = getIntInput();
             switch (choice) {
@@ -167,6 +174,9 @@ public class MenuUI {
                 case 4:
                     ProductManagement.showAllProducts(mobiles, chargers, mobileCases);
                     break;
+                case 5:
+                    viewAllCustomersPurchaseHistory();
+                    break;
                 case 0:
                     return;
                 default:
@@ -174,6 +184,7 @@ public class MenuUI {
             }
         } while (choice != 0);
     }
+
 
     void addNewProductMenu() {
         System.out.println("Add new Product");
@@ -277,6 +288,43 @@ public class MenuUI {
                 System.out.println("Status: " + mobileCase.getStatus());
             }
             System.out.println("------------------------------");
+        }
+    }
+
+    private void viewCustomerPurchaseHistory(String username) {
+        Map<String, List<String>> history = PurchaseHistoryService.getCustomerPurchaseHistory(username);
+        if (history.isEmpty() || !history.containsKey(username)) {
+            System.out.println("No purchase history found for " + username);
+        } else {
+            System.out.println("===== Purchase History =====");
+            System.out.println("Name: " + username);
+            List<String> entries = history.get(username);
+            for (String entry : entries) {
+                System.out.println(entry);
+            }
+            if (history.containsKey("Total")) {
+                System.out.println("Total purchased: " + history.get("Total").get(0));
+            }
+        }
+    }
+
+    private void viewAllCustomersPurchaseHistory() {
+        Map<String, Map<String, List<String>>> allHistory = PurchaseHistoryService.getAllCustomersPurchaseHistory();
+        if (allHistory.isEmpty()) {
+            System.out.println("No purchase history found for any customer.");
+        } else {
+            System.out.println("===== All Customers' Purchase History =====");
+            for (Map.Entry<String, Map<String, List<String>>> customerEntry : allHistory.entrySet()) {
+                String username = customerEntry.getKey();
+                Map<String, List<String>> history = customerEntry.getValue();
+                System.out.println("Name: " + username);
+                List<String> entries = history.get(username);
+                for (String entry : entries) {
+                    System.out.println(entry);
+                }
+                System.out.println("Total purchased: " + history.get("Total").get(0));
+                System.out.println();
+            }
         }
     }
 }
