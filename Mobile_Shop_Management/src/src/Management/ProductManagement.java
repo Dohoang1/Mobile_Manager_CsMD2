@@ -1,80 +1,119 @@
 package Management;
 
-import Entities.Mobile;
-import Entities.Charger;
-import Entities.MobileCase;
-import Entities.Product;
+import Entities.*;
 import Service.*;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ProductManagement {
+
     public static void showAllProducts(ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        MenuUI menuUI = new MenuUI(new Scanner(System.in), null, mobiles, chargers, mobileCases);
-        menuUI.showAllProducts();
-    }
-
-    public static void addNewProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        MenuUI menuUI = new MenuUI(input, null, mobiles, chargers, mobileCases);
-        menuUI.addNewProductMenu();
-    }
-
-    public static void deleteProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        System.out.println("Delete Product");
-        Product productToDelete = findExistingProduct(input, new ArrayList<>(mobiles));
-        if (productToDelete == null) {
-            productToDelete = findExistingProduct(input, new ArrayList<>(chargers));
+        System.out.println("===== All Products =====");
+        System.out.println("Mobiles:");
+        for (Mobile mobile : mobiles) {
+            System.out.println(mobile);
         }
-        if (productToDelete == null) {
-            productToDelete = findExistingProduct(input, new ArrayList<>(mobileCases));
+        System.out.println("\nChargers:");
+        for (Charger charger : chargers) {
+            System.out.println(charger);
         }
-
-        if (productToDelete != null) {
-            if (productToDelete instanceof Mobile) {
-                mobiles.remove(productToDelete);
-            } else if (productToDelete instanceof Charger) {
-                chargers.remove(productToDelete);
-            } else if (productToDelete instanceof MobileCase) {
-                mobileCases.remove(productToDelete);
-            }
-            System.out.println("Product deleted successfully.");
-            FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+        System.out.println("\nMobile Cases:");
+        for (MobileCase mobileCase : mobileCases) {
+            System.out.println(mobileCase);
         }
     }
 
     public static void editProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
         System.out.println("Edit Product");
-        Product productToEdit = findExistingProduct(input, new ArrayList<>(mobiles));
-        if (productToEdit == null) {
-            productToEdit = findExistingProduct(input, new ArrayList<>(chargers));
-        }
-        if (productToEdit == null) {
-            productToEdit = findExistingProduct(input, new ArrayList<>(mobileCases));
-        }
+        Product productToEdit = findExistingProduct(input, mobiles, chargers, mobileCases);
 
         if (productToEdit != null) {
+            boolean updated = false;
             if (productToEdit instanceof Mobile) {
-                MobileService.editMobile((Mobile) productToEdit, input);
+                updated = MobileService.editMobile((Mobile) productToEdit, input);
             } else if (productToEdit instanceof Charger) {
-                ChargerService.editCharger((Charger) productToEdit, input);
+                updated = ChargerService.editCharger((Charger) productToEdit, input);
             } else if (productToEdit instanceof MobileCase) {
-                MobileCaseService.editMobileCase((MobileCase) productToEdit, input);
+                updated = MobileCaseService.editMobileCase((MobileCase) productToEdit, input);
             }
-            FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+
+            if (updated) {
+                FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+                System.out.println("Product edited successfully.");
+            } else {
+                System.out.println("No changes were made to the product.");
+            }
+        } else {
+            System.out.println("Edit operation cancelled.");
         }
     }
 
-    private static Product findExistingProduct(Scanner input, ArrayList<? extends Product> products) {
-        System.out.println("Enter product name or id to search: ");
-        String searchQuery = input.nextLine();
+    public static void deleteProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+        System.out.println("Delete Product");
+        Product productToDelete = findExistingProduct(input, mobiles, chargers, mobileCases);
 
-        for (Product product : products) {
-            if (product.getName().equalsIgnoreCase(searchQuery) || product.getId().equalsIgnoreCase(searchQuery)) {
+        if (productToDelete != null) {
+            System.out.print("Are you sure you want to delete this product? (yes/no): ");
+            String confirmation = input.nextLine().trim().toLowerCase();
+
+            if (confirmation.equals("yes")) {
+                boolean deleted = false;
+                if (productToDelete instanceof Mobile) {
+                    deleted = mobiles.remove(productToDelete);
+                } else if (productToDelete instanceof Charger) {
+                    deleted = chargers.remove(productToDelete);
+                } else if (productToDelete instanceof MobileCase) {
+                    deleted = mobileCases.remove(productToDelete);
+                }
+
+                if (deleted) {
+                    FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+                    System.out.println("Product deleted successfully.");
+                } else {
+                    System.out.println("Failed to delete the product. Please try again.");
+                }
+            } else {
+                System.out.println("Delete operation cancelled.");
+            }
+        } else {
+            System.out.println("Delete operation cancelled.");
+        }
+    }
+
+    public static Product findExistingProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+        while (true) {
+            System.out.print("Enter product name or id to search (or 'exit' to cancel): ");
+            String searchQuery = input.nextLine().trim().toLowerCase();
+
+            if (searchQuery.equals("exit")) {
+                return null;
+            }
+
+            Product foundProduct = searchInList(searchQuery, mobiles);
+            if (foundProduct == null) {
+                foundProduct = searchInList(searchQuery, chargers);
+            }
+            if (foundProduct == null) {
+                foundProduct = searchInList(searchQuery, mobileCases);
+            }
+
+            if (foundProduct != null) {
+                System.out.println("Found product: " + foundProduct.getName() + " (ID: " + foundProduct.getId() + ")");
+                return foundProduct;
+            } else {
+                System.out.println("Product not found. Please try again.");
+            }
+        }
+    }
+
+    private static <T extends Product> T searchInList(String searchQuery, ArrayList<T> products) {
+        for (T product : products) {
+            if (product.getName().toLowerCase().contains(searchQuery) ||
+                    product.getId().toLowerCase().equals(searchQuery)) {
                 return product;
             }
         }
-        System.out.println("Product not found.");
         return null;
     }
 }
