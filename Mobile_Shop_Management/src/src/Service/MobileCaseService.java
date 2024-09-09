@@ -33,52 +33,36 @@ public class MobileCaseService extends ProductService {
                 int choice = Integer.parseInt(input.nextLine());
                 switch (choice) {
                     case 1:
-                        if (editStringField("name", mobileCase.getName(), input)) {
-                            mobileCase.setName(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobileCase.setName(editStringField("name", mobileCase.getName(), input));
+                        updated = true;
                         break;
                     case 2:
-                        if (editStringField("brand", mobileCase.getBrand(), input)) {
-                            mobileCase.setBrand(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobileCase.setBrand(editStringField("brand", mobileCase.getBrand(), input));
+                        updated = true;
                         break;
                     case 3:
-                        if (editStringField("ID", mobileCase.getId(), input)) {
-                            mobileCase.setId(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobileCase.setId(editStringField("ID", mobileCase.getId(), input));
+                        updated = true;
                         break;
                     case 4:
-                        if (editStringField("color", mobileCase.getColor(), input)) {
-                            mobileCase.setColor(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobileCase.setColor(editStringField("color", mobileCase.getColor(), input));
+                        updated = true;
                         break;
                     case 5:
-                        if (editIntField("price", mobileCase.getPrice(), input)) {
-                            mobileCase.setPrice(Integer.parseInt(input.nextLine().trim()));
-                            updated = true;
-                        }
+                        mobileCase.setPrice(editIntField("price", mobileCase.getPrice(), input));
+                        updated = true;
                         break;
                     case 6:
-                        if (editIntField("stock", mobileCase.getStock(), input)) {
-                            mobileCase.setStock(Integer.parseInt(input.nextLine().trim()));
-                            updated = true;
-                        }
+                        mobileCase.setStock(editIntField("stock", mobileCase.getStock(), input));
+                        updated = true;
                         break;
                     case 7:
-                        if (editStringField("status", mobileCase.getStatus(), input)) {
-                            mobileCase.setStatus(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobileCase.setStatus(editStringField("status", mobileCase.getStatus(), input));
+                        updated = true;
                         break;
                     case 8:
-                        if (editStringField("use for", mobileCase.getUseFor(), input)) {
-                            mobileCase.setUseFor(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobileCase.setUseFor(editStringField("use for", mobileCase.getUseFor(), input));
+                        updated = true;
                         break;
                     case 0:
                         return updated;
@@ -89,14 +73,5 @@ public class MobileCaseService extends ProductService {
                 System.out.println("Invalid input. Please enter a number.");
             }
         }
-    }
-
-    public static MobileCase findMobileCaseById(String id, ArrayList<MobileCase> mobileCases) {
-        for (MobileCase mobileCase : mobileCases) {
-            if (mobileCase.getId().equals(id)) {
-                return mobileCase;
-            }
-        }
-        return null;
     }
 }

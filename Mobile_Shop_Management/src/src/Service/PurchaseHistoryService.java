@@ -3,10 +3,20 @@ package Service;
 import Controller.Customer;
 import Entities.Product;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Collections;
 
 public class PurchaseHistoryService {
     private static final String PURCHASE_HISTORY_FILE = "purchase_history.csv";
@@ -94,5 +104,42 @@ public class PurchaseHistoryService {
             System.out.println("Error reading purchase history file: " + e.getMessage());
         }
         return allHistory;
+    }
+
+    public static void viewCustomerPurchaseHistory(String username) {
+        Map<String, List<String>> history = getCustomerPurchaseHistory(username);
+        if (history.isEmpty() || !history.containsKey(username)) {
+            System.out.println("No purchase history found for " + username);
+        } else {
+            System.out.println("===== Purchase History =====");
+            System.out.println("Name: " + username);
+            List<String> entries = history.get(username);
+            for (String entry : entries) {
+                System.out.println(entry);
+            }
+            if (history.containsKey("Total")) {
+                System.out.println("Total purchased: " + history.get("Total").get(0));
+            }
+        }
+    }
+
+    public static void viewAllCustomersPurchaseHistory() {
+        Map<String, Map<String, List<String>>> allHistory = getAllCustomersPurchaseHistory();
+        if (allHistory.isEmpty()) {
+            System.out.println("No purchase history found for any customer.");
+        } else {
+            System.out.println("===== All Customers' Purchase History =====");
+            for (Map.Entry<String, Map<String, List<String>>> customerEntry : allHistory.entrySet()) {
+                String username = customerEntry.getKey();
+                Map<String, List<String>> history = customerEntry.getValue();
+                System.out.println("Name: " + username);
+                List<String> entries = history.get(username);
+                for (String entry : entries) {
+                    System.out.println(entry);
+                }
+                System.out.println("Total purchased: " + history.get("Total").get(0));
+                System.out.println();
+            }
+        }
     }
 }

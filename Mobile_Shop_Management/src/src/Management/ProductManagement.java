@@ -1,117 +1,165 @@
 package Management;
 
 import Entities.*;
-import Service.*;
+import Service.CurrencyFormatter;
+import Service.MobileService;
+import Service.ChargerService;
+import Service.MobileCaseService;
+import Service.FileService;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ProductManagement {
 
     public static void showAllProducts(ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
         System.out.println("===== All Products =====");
-        System.out.println("Mobiles:");
-        for (Mobile mobile : mobiles) {
-            System.out.println(mobile);
-        }
-        System.out.println("\nChargers:");
-        for (Charger charger : chargers) {
-            System.out.println(charger);
-        }
-        System.out.println("\nMobile Cases:");
-        for (MobileCase mobileCase : mobileCases) {
-            System.out.println(mobileCase);
+
+        showMobiles(mobiles);
+        showChargers(chargers);
+        showMobileCases(mobileCases);
+    }
+
+    private static void showMobiles(List<Mobile> mobiles) {
+        System.out.println("\nMobile Phones:");
+        if (mobiles.isEmpty()) {
+            System.out.println("No mobile phones available.");
+        } else {
+            String format = "| %-6s | %-30s | %-15s | %-15s | %-15s | %-8s | %-10s |";
+            System.out.println(String.format(format, "ID", "Name", "Brand", "Color", "Price", "Stock", "OS"));
+            System.out.println("-".repeat(120));
+
+            for (Mobile mobile : mobiles) {
+                System.out.println(String.format(format,
+                        mobile.getId(),
+                        truncate(mobile.getName(), 30),
+                        truncate(mobile.getBrand(), 15),
+                        truncate(mobile.getColor(), 15),
+                        CurrencyFormatter.formatToVND(mobile.getPrice()),
+                        mobile.getStock(),
+                        truncate(mobile.getOs(), 10)
+                ));
+            }
+            System.out.println("-".repeat(120));
         }
     }
 
-    public static void editProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        System.out.println("Edit Product");
-        Product productToEdit = findExistingProduct(input, mobiles, chargers, mobileCases);
+    private static void showChargers(List<Charger> chargers) {
+        System.out.println("\nChargers:");
+        if (chargers.isEmpty()) {
+            System.out.println("No chargers available.");
+        } else {
+            String format = "| %-6s | %-30s | %-15s | %-15s | %-15s | %-8s | %-15s | %-15s |";
+            System.out.println(String.format(format, "ID", "Name", "Brand", "Color", "Price", "Stock", "Cable Type", "Cable Length"));
+            System.out.println("-".repeat(140));
 
-        if (productToEdit != null) {
+            for (Charger charger : chargers) {
+                System.out.println(String.format(format,
+                        charger.getId(),
+                        truncate(charger.getName(), 30),
+                        truncate(charger.getBrand(), 15),
+                        truncate(charger.getColor(), 15),
+                        CurrencyFormatter.formatToVND(charger.getPrice()),
+                        charger.getStock(),
+                        truncate(charger.getCableType(), 15),
+                        truncate(charger.getCableLength(), 15)
+                ));
+            }
+            System.out.println("-".repeat(140));
+        }
+    }
+
+    private static void showMobileCases(List<MobileCase> mobileCases) {
+        System.out.println("\nMobile Cases:");
+        if (mobileCases.isEmpty()) {
+            System.out.println("No mobile cases available.");
+        } else {
+            String format = "| %-6s | %-30s | %-15s | %-15s | %-15s | %-8s | %-20s |";
+            System.out.println(String.format(format, "ID", "Name", "Brand", "Color", "Price", "Stock", "Compatible With"));
+            System.out.println("-".repeat(130));
+
+            for (MobileCase mobileCase : mobileCases) {
+                System.out.println(String.format(format,
+                        mobileCase.getId(),
+                        truncate(mobileCase.getName(), 30),
+                        truncate(mobileCase.getBrand(), 15),
+                        truncate(mobileCase.getColor(), 15),
+                        CurrencyFormatter.formatToVND(mobileCase.getPrice()),
+                        mobileCase.getStock(),
+                        truncate(mobileCase.getUseFor(), 20)
+                ));
+            }
+            System.out.println("-".repeat(130));
+        }
+    }
+
+    private static String truncate(String str, int length) {
+        return str.length() > length ? str.substring(0, length - 3) + "..." : str;
+    }
+
+    public static void editProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+        System.out.print("Nhập ID của sản phẩm bạn muốn chỉnh sửa: ");
+        String productId = input.nextLine().trim();
+
+        Product product = findExistingProduct(productId, mobiles, chargers, mobileCases);
+
+        if (product != null) {
             boolean updated = false;
-            if (productToEdit instanceof Mobile) {
-                updated = MobileService.editMobile((Mobile) productToEdit, input);
-            } else if (productToEdit instanceof Charger) {
-                updated = ChargerService.editCharger((Charger) productToEdit, input);
-            } else if (productToEdit instanceof MobileCase) {
-                updated = MobileCaseService.editMobileCase((MobileCase) productToEdit, input);
+            if (product instanceof Mobile) {
+                updated = MobileService.editMobile((Mobile) product, input);
+            } else if (product instanceof Charger) {
+                updated = ChargerService.editCharger((Charger) product, input);
+            } else if (product instanceof MobileCase) {
+                updated = MobileCaseService.editMobileCase((MobileCase) product, input);
             }
 
             if (updated) {
+                System.out.println("Sản phẩm đã được cập nhật thành công.");
                 FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
-                System.out.println("Product edited successfully.");
             } else {
-                System.out.println("No changes were made to the product.");
+                System.out.println("Không có thay đổi nào được thực hiện cho sản phẩm.");
             }
         } else {
-            System.out.println("Edit operation cancelled.");
+            System.out.println("Không tìm thấy sản phẩm với ID đã nhập.");
         }
     }
 
     public static void deleteProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        System.out.println("Delete Product");
-        Product productToDelete = findExistingProduct(input, mobiles, chargers, mobileCases);
+        System.out.print("Enter the ID of the product you want to delete: ");
+        String productId = input.nextLine();
 
-        if (productToDelete != null) {
-            System.out.print("Are you sure you want to delete this product? (yes/no): ");
-            String confirmation = input.nextLine().trim().toLowerCase();
+        Product product = findExistingProduct(productId, mobiles, chargers, mobileCases);
 
-            if (confirmation.equals("yes")) {
-                boolean deleted = false;
-                if (productToDelete instanceof Mobile) {
-                    deleted = mobiles.remove(productToDelete);
-                } else if (productToDelete instanceof Charger) {
-                    deleted = chargers.remove(productToDelete);
-                } else if (productToDelete instanceof MobileCase) {
-                    deleted = mobileCases.remove(productToDelete);
-                }
-
-                if (deleted) {
-                    FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
-                    System.out.println("Product deleted successfully.");
-                } else {
-                    System.out.println("Failed to delete the product. Please try again.");
-                }
-            } else {
-                System.out.println("Delete operation cancelled.");
+        if (product != null) {
+            if (product instanceof Mobile) {
+                mobiles.remove(product);
+            } else if (product instanceof Charger) {
+                chargers.remove(product);
+            } else if (product instanceof MobileCase) {
+                mobileCases.remove(product);
             }
+            System.out.println("Product deleted successfully.");
+            FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
         } else {
-            System.out.println("Delete operation cancelled.");
+            System.out.println("Product not found.");
         }
     }
 
-    public static Product findExistingProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        while (true) {
-            System.out.print("Enter product name or id to search (or 'exit' to cancel): ");
-            String searchQuery = input.nextLine().trim().toLowerCase();
-
-            if (searchQuery.equals("exit")) {
-                return null;
-            }
-
-            Product foundProduct = searchInList(searchQuery, mobiles);
-            if (foundProduct == null) {
-                foundProduct = searchInList(searchQuery, chargers);
-            }
-            if (foundProduct == null) {
-                foundProduct = searchInList(searchQuery, mobileCases);
-            }
-
-            if (foundProduct != null) {
-                System.out.println("Found product: " + foundProduct.getName() + " (ID: " + foundProduct.getId() + ")");
-                return foundProduct;
-            } else {
-                System.out.println("Product not found. Please try again.");
+    public static Product findExistingProduct(String productId, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+        for (Mobile mobile : mobiles) {
+            if (mobile.getId().equalsIgnoreCase(productId)) {
+                return mobile;
             }
         }
-    }
-
-    private static <T extends Product> T searchInList(String searchQuery, ArrayList<T> products) {
-        for (T product : products) {
-            if (product.getName().toLowerCase().contains(searchQuery) ||
-                    product.getId().toLowerCase().equals(searchQuery)) {
-                return product;
+        for (Charger charger : chargers) {
+            if (charger.getId().equalsIgnoreCase(productId)) {
+                return charger;
+            }
+        }
+        for (MobileCase mobileCase : mobileCases) {
+            if (mobileCase.getId().equalsIgnoreCase(productId)) {
+                return mobileCase;
             }
         }
         return null;

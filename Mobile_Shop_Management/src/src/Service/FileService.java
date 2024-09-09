@@ -4,7 +4,11 @@ import Controller.Customer;
 import Entities.Mobile;
 import Entities.Charger;
 import Entities.MobileCase;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FileService {
@@ -19,49 +23,63 @@ public class FileService {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
+                if (values.length < 8) {
+                    System.out.println("Skipping invalid line: " + line);
+                    continue;
+                }
                 String type = values[0];
                 switch (type) {
                     case "Mobile":
-                        mobiles.add(new Mobile.Builder()
-                                .setName(values[1])
-                                .setBrand(values[2])
-                                .setId(values[3])
-                                .setColor(values[4])
-                                .setPrice(Integer.parseInt(values[5]))
-                                .setStock(Integer.parseInt(values[6]))
-                                .setStatus(values[7])
-                                .setOs(values[8])
-                                .build());
+                        if (values.length >= 9) {
+                            mobiles.add(new Mobile.Builder()
+                                    .setName(values[1])
+                                    .setBrand(values[2])
+                                    .setId(values[3])
+                                    .setColor(values[4])
+                                    .setPrice(Integer.parseInt(values[5]))
+                                    .setStock(Integer.parseInt(values[6]))
+                                    .setStatus(values[7])
+                                    .setOs(values[8])
+                                    .build());
+                        }
                         break;
                     case "Charger":
-                        chargers.add(new Charger.Builder()
-                                .setName(values[1])
-                                .setBrand(values[2])
-                                .setId(values[3])
-                                .setColor(values[4])
-                                .setPrice(Integer.parseInt(values[5]))
-                                .setStock(Integer.parseInt(values[6]))
-                                .setStatus(values[7])
-                                .setCableType(values[8])
-                                .setCableLength(values[9])
-                                .build());
+                        if (values.length >= 10) {
+                            chargers.add(new Charger.Builder()
+                                    .setName(values[1])
+                                    .setBrand(values[2])
+                                    .setId(values[3])
+                                    .setColor(values[4])
+                                    .setPrice(Integer.parseInt(values[5]))
+                                    .setStock(Integer.parseInt(values[6]))
+                                    .setStatus(values[7])
+                                    .setCableType(values[8])
+                                    .setCableLength(values[9])
+                                    .build());
+                        }
                         break;
                     case "MobileCase":
-                        mobileCases.add(new MobileCase.Builder()
-                                .setName(values[1])
-                                .setBrand(values[2])
-                                .setId(values[3])
-                                .setColor(values[4])
-                                .setPrice(Integer.parseInt(values[5]))
-                                .setStock(Integer.parseInt(values[6]))
-                                .setStatus(values[7])
-                                .setUseFor(values[8])
-                                .build());
+                        if (values.length >= 9) {
+                            mobileCases.add(new MobileCase.Builder()
+                                    .setName(values[1])
+                                    .setBrand(values[2])
+                                    .setId(values[3])
+                                    .setColor(values[4])
+                                    .setPrice(Integer.parseInt(values[5]))
+                                    .setStock(Integer.parseInt(values[6]))
+                                    .setStatus(values[7])
+                                    .setUseFor(values[8])
+                                    .build());
+                        }
                         break;
+                    default:
+                        System.out.println("Unknown product type: " + type);
                 }
             }
         } catch (IOException e) {
             System.out.println("No existing products data found. Starting with an empty product list.");
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing numeric value: " + e.getMessage());
         }
     }
 

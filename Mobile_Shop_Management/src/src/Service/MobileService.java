@@ -33,52 +33,36 @@ public class MobileService extends ProductService {
                 int choice = Integer.parseInt(input.nextLine());
                 switch (choice) {
                     case 1:
-                        if (ProductService.editStringField("name", mobile.getName(), input)) {
-                            mobile.setName(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobile.setName(editStringField("name", mobile.getName(), input));
+                        updated = true;
                         break;
                     case 2:
-                        if (ProductService.editStringField("brand", mobile.getBrand(), input)) {
-                            mobile.setBrand(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobile.setBrand(editStringField("brand", mobile.getBrand(), input));
+                        updated = true;
                         break;
                     case 3:
-                        if (ProductService.editStringField("ID", mobile.getId(), input)) {
-                            mobile.setId(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobile.setId(editStringField("ID", mobile.getId(), input));
+                        updated = true;
                         break;
                     case 4:
-                        if (ProductService.editStringField("color", mobile.getColor(), input)) {
-                            mobile.setColor(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobile.setColor(editStringField("color", mobile.getColor(), input));
+                        updated = true;
                         break;
                     case 5:
-                        if (ProductService.editIntField("price", mobile.getPrice(), input)) {
-                            mobile.setPrice(Integer.parseInt(input.nextLine().trim()));
-                            updated = true;
-                        }
+                        mobile.setPrice(editIntField("price", mobile.getPrice(), input));
+                        updated = true;
                         break;
                     case 6:
-                        if (ProductService.editIntField("stock", mobile.getStock(), input)) {
-                            mobile.setStock(Integer.parseInt(input.nextLine().trim()));
-                            updated = true;
-                        }
+                        mobile.setStock(editIntField("stock", mobile.getStock(), input));
+                        updated = true;
                         break;
                     case 7:
-                        if (ProductService.editStringField("status", mobile.getStatus(), input)) {
-                            mobile.setStatus(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobile.setStatus(editStringField("status", mobile.getStatus(), input));
+                        updated = true;
                         break;
                     case 8:
-                        if (ProductService.editStringField("OS", mobile.getOs(), input)) {
-                            mobile.setOs(input.nextLine().trim());
-                            updated = true;
-                        }
+                        mobile.setOs(editStringField("OS", mobile.getOs(), input));
+                        updated = true;
                         break;
                     case 0:
                         return updated;
@@ -89,14 +73,5 @@ public class MobileService extends ProductService {
                 System.out.println("Invalid input. Please enter a number.");
             }
         }
-    }
-
-    public static Mobile findMobileById(String id, ArrayList<Mobile> mobiles) {
-        for (Mobile mobile : mobiles) {
-            if (mobile.getId().equals(id)) {
-                return mobile;
-            }
-        }
-        return null;
     }
 }

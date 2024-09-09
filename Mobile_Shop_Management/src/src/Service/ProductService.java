@@ -3,17 +3,17 @@ package Service;
 import java.util.Scanner;
 
 public class ProductService {
-    protected static boolean editStringField(String fieldName, String currentValue, Scanner input) {
+    protected static String editStringField(String fieldName, String currentValue, Scanner input) {
         System.out.print("Enter new " + fieldName + " (or press Enter to skip): ");
         String newValue = input.nextLine().trim();
         if (!newValue.isEmpty() && !newValue.equals(currentValue)) {
             System.out.println(fieldName + " updated successfully.");
-            return true;
+            return newValue;
         }
-        return false;
+        return currentValue;
     }
 
-    protected static boolean editIntField(String fieldName, int currentValue, Scanner input) {
+    protected static int editIntField(String fieldName, int currentValue, Scanner input) {
         System.out.print("Enter new " + fieldName + " (or press Enter to skip): ");
         String newValue = input.nextLine().trim();
         if (!newValue.isEmpty()) {
@@ -21,12 +21,12 @@ public class ProductService {
                 int intValue = Integer.parseInt(newValue);
                 if (intValue != currentValue) {
                     System.out.println(fieldName + " updated successfully.");
-                    return true;
+                    return intValue;
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
             }
         }
-        return false;
+        return currentValue;
     }
 }

@@ -9,8 +9,6 @@ import Entities.Product;
 import Service.*;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class MenuUI {
@@ -136,10 +134,10 @@ public class MenuUI {
                     CartService.showCart(cart);
                     break;
                 case 4:
-                    CartService.checkout(cart, mobiles, chargers, mobileCases, customer);
+                    CartService.checkout(cart, mobiles, chargers, mobileCases, customer, input);
                     break;
                 case 5:
-                    viewCustomerPurchaseHistory(customer.getUsername());
+                    PurchaseHistoryService.viewCustomerPurchaseHistory(customer.getUsername());
                     break;
                 case 0:
                     System.out.println("Logging out...");
@@ -175,7 +173,7 @@ public class MenuUI {
                     ProductManagement.showAllProducts(mobiles, chargers, mobileCases);
                     break;
                 case 5:
-                    viewAllCustomersPurchaseHistory();
+                    PurchaseHistoryService.viewAllCustomersPurchaseHistory();
                     break;
                 case 0:
                     return;
@@ -220,111 +218,6 @@ public class MenuUI {
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a number.");
             return -1;
-        }
-    }
-
-    public void showAllProducts() {
-        System.out.println("===== All Products =====");
-        showAllMobiles();
-        showAllChargers();
-        showAllMobileCases();
-    }
-
-    public void showAllMobiles() {
-        if (mobiles.isEmpty()) {
-            System.out.println("No mobile products available.");
-        } else {
-            System.out.println("===== Mobile Phone List =====");
-            for (Mobile mobile : mobiles) {
-                System.out.println("------------------------------");
-                System.out.println("Name: " + mobile.getName());
-                System.out.println("Brand: " + mobile.getBrand());
-                System.out.println("ID: " + mobile.getId());
-                System.out.println("Color: " + mobile.getColor());
-                System.out.println("OS: " + mobile.getOs());
-                System.out.println("Price: " + CurrencyFormatter.formatToVND(mobile.getPrice()));
-                System.out.println("Stock: " + mobile.getStock());
-                System.out.println("Status: " + mobile.getStatus());
-            }
-            System.out.println("------------------------------");
-        }
-    }
-
-    public void showAllChargers() {
-        if (chargers.isEmpty()) {
-            System.out.println("No charger products available.");
-        } else {
-            System.out.println("===== Charger List =====");
-            for (Charger charger : chargers) {
-                System.out.println("------------------------------");
-                System.out.println("Name: " + charger.getName());
-                System.out.println("Brand: " + charger.getBrand());
-                System.out.println("ID: " + charger.getId());
-                System.out.println("Color: " + charger.getColor());
-                System.out.println("Cable Type: " + charger.getCableType());
-                System.out.println("Cable Length: " + charger.getCableLength());
-                System.out.println("Price: " + CurrencyFormatter.formatToVND(charger.getPrice()));
-                System.out.println("Stock: " + charger.getStock());
-                System.out.println("Status: " + charger.getStatus());
-            }
-            System.out.println("------------------------------");
-        }
-    }
-
-    public void showAllMobileCases() {
-        if (mobileCases.isEmpty()) {
-            System.out.println("No mobile case products available.");
-        } else {
-            System.out.println("===== Mobile Case List =====");
-            for (MobileCase mobileCase : mobileCases) {
-                System.out.println("------------------------------");
-                System.out.println("Name: " + mobileCase.getName());
-                System.out.println("Brand: " + mobileCase.getBrand());
-                System.out.println("ID: " + mobileCase.getId());
-                System.out.println("Color: " + mobileCase.getColor());
-                System.out.println("Use For: " + mobileCase.getUseFor());
-                System.out.println("Price: " + CurrencyFormatter.formatToVND(mobileCase.getPrice()));
-                System.out.println("Stock: " + mobileCase.getStock());
-                System.out.println("Status: " + mobileCase.getStatus());
-            }
-            System.out.println("------------------------------");
-        }
-    }
-
-    private void viewCustomerPurchaseHistory(String username) {
-        Map<String, List<String>> history = PurchaseHistoryService.getCustomerPurchaseHistory(username);
-        if (history.isEmpty() || !history.containsKey(username)) {
-            System.out.println("No purchase history found for " + username);
-        } else {
-            System.out.println("===== Purchase History =====");
-            System.out.println("Name: " + username);
-            List<String> entries = history.get(username);
-            for (String entry : entries) {
-                System.out.println(entry);
-            }
-            if (history.containsKey("Total")) {
-                System.out.println("Total purchased: " + history.get("Total").get(0));
-            }
-        }
-    }
-
-    private void viewAllCustomersPurchaseHistory() {
-        Map<String, Map<String, List<String>>> allHistory = PurchaseHistoryService.getAllCustomersPurchaseHistory();
-        if (allHistory.isEmpty()) {
-            System.out.println("No purchase history found for any customer.");
-        } else {
-            System.out.println("===== All Customers' Purchase History =====");
-            for (Map.Entry<String, Map<String, List<String>>> customerEntry : allHistory.entrySet()) {
-                String username = customerEntry.getKey();
-                Map<String, List<String>> history = customerEntry.getValue();
-                System.out.println("Name: " + username);
-                List<String> entries = history.get(username);
-                for (String entry : entries) {
-                    System.out.println(entry);
-                }
-                System.out.println("Total purchased: " + history.get("Total").get(0));
-                System.out.println();
-            }
         }
     }
 }

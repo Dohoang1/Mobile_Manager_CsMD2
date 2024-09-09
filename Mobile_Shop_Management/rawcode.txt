@@ -49,17 +49,11 @@ public class Customer {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Override
     public String toString() {
@@ -69,7 +63,6 @@ public class Customer {
                 '}';
     }
 }
-
 
 package Entities;
 
@@ -133,7 +126,6 @@ public class Charger extends Product {
         return super.toCSV() + "," + cableType + "," + cableLength;
     }
 }
-
 
 package Entities;
 
@@ -574,7 +566,10 @@ import java.util.Scanner;
 public class MenuManagement {
     private MenuUI menuUI;
 
-    public MenuManagement(ArrayList<Customer> customers, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+    public MenuManagement(ArrayList<Customer> customers,
+                          ArrayList<Mobile> mobiles,
+                          ArrayList<Charger> chargers,
+                          ArrayList<MobileCase> mobileCases) {
         Scanner input = new Scanner(System.in);
         this.menuUI = new MenuUI(input, customers, mobiles, chargers, mobileCases);
     }
@@ -722,7 +717,7 @@ public class MenuUI {
                     CartService.showCart(cart);
                     break;
                 case 4:
-                    CartService.checkout(cart, mobiles, chargers, mobileCases, customer);
+                    CartService.checkout(cart, mobiles, chargers, mobileCases, customer, input);
                     break;
                 case 5:
                     viewCustomerPurchaseHistory(customer.getUsername());
@@ -809,74 +804,6 @@ public class MenuUI {
         }
     }
 
-    public void showAllProducts() {
-        System.out.println("===== All Products =====");
-        showAllMobiles();
-        showAllChargers();
-        showAllMobileCases();
-    }
-
-    public void showAllMobiles() {
-        if (mobiles.isEmpty()) {
-            System.out.println("No mobile products available.");
-        } else {
-            System.out.println("===== Mobile Phone List =====");
-            for (Mobile mobile : mobiles) {
-                System.out.println("------------------------------");
-                System.out.println("Name: " + mobile.getName());
-                System.out.println("Brand: " + mobile.getBrand());
-                System.out.println("ID: " + mobile.getId());
-                System.out.println("Color: " + mobile.getColor());
-                System.out.println("OS: " + mobile.getOs());
-                System.out.println("Price: " + CurrencyFormatter.formatToVND(mobile.getPrice()));
-                System.out.println("Stock: " + mobile.getStock());
-                System.out.println("Status: " + mobile.getStatus());
-            }
-            System.out.println("------------------------------");
-        }
-    }
-
-    public void showAllChargers() {
-        if (chargers.isEmpty()) {
-            System.out.println("No charger products available.");
-        } else {
-            System.out.println("===== Charger List =====");
-            for (Charger charger : chargers) {
-                System.out.println("------------------------------");
-                System.out.println("Name: " + charger.getName());
-                System.out.println("Brand: " + charger.getBrand());
-                System.out.println("ID: " + charger.getId());
-                System.out.println("Color: " + charger.getColor());
-                System.out.println("Cable Type: " + charger.getCableType());
-                System.out.println("Cable Length: " + charger.getCableLength());
-                System.out.println("Price: " + CurrencyFormatter.formatToVND(charger.getPrice()));
-                System.out.println("Stock: " + charger.getStock());
-                System.out.println("Status: " + charger.getStatus());
-            }
-            System.out.println("------------------------------");
-        }
-    }
-
-    public void showAllMobileCases() {
-        if (mobileCases.isEmpty()) {
-            System.out.println("No mobile case products available.");
-        } else {
-            System.out.println("===== Mobile Case List =====");
-            for (MobileCase mobileCase : mobileCases) {
-                System.out.println("------------------------------");
-                System.out.println("Name: " + mobileCase.getName());
-                System.out.println("Brand: " + mobileCase.getBrand());
-                System.out.println("ID: " + mobileCase.getId());
-                System.out.println("Color: " + mobileCase.getColor());
-                System.out.println("Use For: " + mobileCase.getUseFor());
-                System.out.println("Price: " + CurrencyFormatter.formatToVND(mobileCase.getPrice()));
-                System.out.println("Stock: " + mobileCase.getStock());
-                System.out.println("Status: " + mobileCase.getStatus());
-            }
-            System.out.println("------------------------------");
-        }
-    }
-
     private void viewCustomerPurchaseHistory(String username) {
         Map<String, List<String>> history = PurchaseHistoryService.getCustomerPurchaseHistory(username);
         if (history.isEmpty() || !history.containsKey(username)) {
@@ -917,81 +844,173 @@ public class MenuUI {
 
 package Management;
 
-import Entities.Mobile;
-import Entities.Charger;
-import Entities.MobileCase;
-import Entities.Product;
+import Entities.*;
 import Service.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ProductManagement {
+
     public static void showAllProducts(ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        MenuUI menuUI = new MenuUI(new Scanner(System.in), null, mobiles, chargers, mobileCases);
-        menuUI.showAllProducts();
+        System.out.println("===== All Products =====");
+
+        showMobiles(mobiles);
+        showChargers(chargers);
+        showMobileCases(mobileCases);
     }
 
-    public static void addNewProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        MenuUI menuUI = new MenuUI(input, null, mobiles, chargers, mobileCases);
-        menuUI.addNewProductMenu();
-    }
+    private static void showMobiles(List<Mobile> mobiles) {
+        System.out.println("\nMobile Phones:");
+        if (mobiles.isEmpty()) {
+            System.out.println("No mobile phones available.");
+        } else {
+            String format = "| %-6s | %-30s | %-15s | %-15s | %-15s | %-8s | %-10s |";
+            System.out.println(String.format(format, "ID", "Name", "Brand", "Color", "Price", "Stock", "OS"));
+            System.out.println("-".repeat(120));
 
-    public static void deleteProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        System.out.println("Delete Product");
-        Product productToDelete = findExistingProduct(input, new ArrayList<>(mobiles));
-        if (productToDelete == null) {
-            productToDelete = findExistingProduct(input, new ArrayList<>(chargers));
-        }
-        if (productToDelete == null) {
-            productToDelete = findExistingProduct(input, new ArrayList<>(mobileCases));
-        }
-
-        if (productToDelete != null) {
-            if (productToDelete instanceof Mobile) {
-                mobiles.remove(productToDelete);
-            } else if (productToDelete instanceof Charger) {
-                chargers.remove(productToDelete);
-            } else if (productToDelete instanceof MobileCase) {
-                mobileCases.remove(productToDelete);
+            for (Mobile mobile : mobiles) {
+                System.out.println(String.format(format,
+                        mobile.getId(),
+                        truncate(mobile.getName(), 30),
+                        truncate(mobile.getBrand(), 15),
+                        truncate(mobile.getColor(), 15),
+                        CurrencyFormatter.formatToVND(mobile.getPrice()),
+                        mobile.getStock(),
+                        truncate(mobile.getOs(), 10)
+                ));
             }
-            System.out.println("Product deleted successfully.");
-            FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+            System.out.println("-".repeat(120));
         }
+    }
+
+    private static void showChargers(List<Charger> chargers) {
+        System.out.println("\nChargers:");
+        if (chargers.isEmpty()) {
+            System.out.println("No chargers available.");
+        } else {
+            String format = "| %-6s | %-30s | %-15s | %-15s | %-15s | %-8s | %-15s | %-15s |";
+            System.out.println(String.format(format, "ID", "Name", "Brand", "Color", "Price", "Stock", "Cable Type", "Cable Length"));
+            System.out.println("-".repeat(140));
+
+            for (Charger charger : chargers) {
+                System.out.println(String.format(format,
+                        charger.getId(),
+                        truncate(charger.getName(), 30),
+                        truncate(charger.getBrand(), 15),
+                        truncate(charger.getColor(), 15),
+                        CurrencyFormatter.formatToVND(charger.getPrice()),
+                        charger.getStock(),
+                        truncate(charger.getCableType(), 15),
+                        truncate(charger.getCableLength(), 15)
+                ));
+            }
+            System.out.println("-".repeat(140));
+        }
+    }
+
+    private static void showMobileCases(List<MobileCase> mobileCases) {
+        System.out.println("\nMobile Cases:");
+        if (mobileCases.isEmpty()) {
+            System.out.println("No mobile cases available.");
+        } else {
+            String format = "| %-6s | %-30s | %-15s | %-15s | %-15s | %-8s | %-20s |";
+            System.out.println(String.format(format, "ID", "Name", "Brand", "Color", "Price", "Stock", "Compatible With"));
+            System.out.println("-".repeat(130));
+
+            for (MobileCase mobileCase : mobileCases) {
+                System.out.println(String.format(format,
+                        mobileCase.getId(),
+                        truncate(mobileCase.getName(), 30),
+                        truncate(mobileCase.getBrand(), 15),
+                        truncate(mobileCase.getColor(), 15),
+                        CurrencyFormatter.formatToVND(mobileCase.getPrice()),
+                        mobileCase.getStock(),
+                        truncate(mobileCase.getUseFor(), 20)
+                ));
+            }
+            System.out.println("-".repeat(130));
+        }
+    }
+
+    private static String truncate(String str, int length) {
+        return str.length() > length ? str.substring(0, length - 3) + "..." : str;
     }
 
     public static void editProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        System.out.println("Edit Product");
-        Product productToEdit = findExistingProduct(input, new ArrayList<>(mobiles));
-        if (productToEdit == null) {
-            productToEdit = findExistingProduct(input, new ArrayList<>(chargers));
-        }
-        if (productToEdit == null) {
-            productToEdit = findExistingProduct(input, new ArrayList<>(mobileCases));
-        }
+        System.out.print("Enter the ID of the product you want to edit: ");
+        String productId = input.nextLine();
 
-        if (productToEdit != null) {
-            if (productToEdit instanceof Mobile) {
-                MobileService.editMobile((Mobile) productToEdit, input);
-            } else if (productToEdit instanceof Charger) {
-                ChargerService.editCharger((Charger) productToEdit, input);
-            } else if (productToEdit instanceof MobileCase) {
-                MobileCaseService.editMobileCase((MobileCase) productToEdit, input);
+        Product product = findExistingProduct(productId, mobiles, chargers, mobileCases);
+
+        if (product != null) {
+            boolean updated = false;
+            if (product instanceof Mobile) {
+                updated = MobileService.editMobile((Mobile) product, input);
+            } else if (product instanceof Charger) {
+                updated = ChargerService.editCharger((Charger) product, input);
+            } else if (product instanceof MobileCase) {
+                updated = MobileCaseService.editMobileCase((MobileCase) product, input);
             }
-            FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+
+            if (updated) {
+                System.out.println("Product updated successfully.");
+                FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+            } else {
+                System.out.println("No changes were made to the product.");
+            }
+        } else {
+            System.out.println("Product not found.");
         }
     }
 
-    private static Product findExistingProduct(Scanner input, ArrayList<? extends Product> products) {
-        System.out.println("Enter product name or id to search: ");
-        String searchQuery = input.nextLine();
+    public static void deleteProduct(Scanner input, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+        System.out.print("Enter the ID of the product you want to delete: ");
+        String productId = input.nextLine();
 
-        for (Product product : products) {
-            if (product.getName().equalsIgnoreCase(searchQuery) || product.getId().equalsIgnoreCase(searchQuery)) {
+        Product product = findExistingProduct(productId, mobiles, chargers, mobileCases);
+
+        if (product != null) {
+            if (product instanceof Mobile) {
+                mobiles.remove(product);
+            } else if (product instanceof Charger) {
+                chargers.remove(product);
+            } else if (product instanceof MobileCase) {
+                mobileCases.remove(product);
+            }
+            System.out.println("Product deleted successfully.");
+            FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+        } else {
+            System.out.println("Product not found.");
+        }
+    }
+
+    public static Product findExistingProduct(String productId, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
+        for (Mobile mobile : mobiles) {
+            if (mobile.getId().equals(productId)) {
+                return mobile;
+            }
+        }
+        for (Charger charger : chargers) {
+            if (charger.getId().equals(productId)) {
+                return charger;
+            }
+        }
+        for (MobileCase mobileCase : mobileCases) {
+            if (mobileCase.getId().equals(productId)) {
+                return mobileCase;
+            }
+        }
+        return null;
+    }
+
+    private static <T extends Product> T searchInList(String searchQuery, ArrayList<T> products) {
+        for (T product : products) {
+            if (product.getId().toLowerCase().equals(searchQuery)) {
                 return product;
             }
         }
-        System.out.println("Product not found.");
         return null;
     }
 }
@@ -1003,6 +1022,8 @@ import Entities.Product;
 import Entities.Mobile;
 import Entities.Charger;
 import Entities.MobileCase;
+import Management.ProductManagement;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -1015,32 +1036,15 @@ public class CartService {
                                         ArrayList<MobileCase> mobileCases,
                                         Scanner scanner)
     {
-        System.out.print("Enter product type (1: Mobile, 2: Charger, 3: Mobile Case): ");
-        int productType = Integer.parseInt(scanner.nextLine());
-
         System.out.print("Enter product ID to add to cart: ");
-        String productId = scanner.nextLine();
+        String productId = scanner.nextLine().trim();
 
-        Product product = null;
-        switch (productType) {
-            case 1:
-                product = MobileService.findMobileById(productId, mobiles);
-                break;
-            case 2:
-                product = ChargerService.findChargerById(productId, chargers);
-                break;
-            case 3:
-                product = MobileCaseService.findMobileCaseById(productId, mobileCases);
-                break;
-            default:
-                System.out.println("Invalid product type.");
-                return;
-        }
+        Product product = ProductManagement.findExistingProduct(productId, mobiles, chargers, mobileCases);
 
         if (product != null) {
             try {
                 System.out.print("Enter quantity: ");
-                int quantity = Integer.parseInt(scanner.nextLine());
+                int quantity = Integer.parseInt(scanner.nextLine().trim());
 
                 if (quantity <= 0) {
                     throw new IllegalArgumentException("Quantity must be greater than 0.");
@@ -1092,64 +1096,53 @@ public class CartService {
         }
     }
 
-    public static void checkout(ArrayList<Product> cart, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases, Customer customer) {
+    public static void checkout(ArrayList<Product> cart, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases, Customer customer, Scanner scanner) {
         if (cart.isEmpty()) {
             System.out.println("Your cart is empty. Please add products to your cart before checking out.");
-        } else {
-            System.out.println("===== Checkout =====");
-            Map<Product, Integer> productCounts = new HashMap<>();
-            double cartTotal = 0;
+            return;
+        }
 
-            for (Product product : cart) {
-                productCounts.put(product, productCounts.getOrDefault(product, 0) + 1);
-                cartTotal += product.getPrice();
-            }
+        System.out.println("===== Checkout =====");
+        Map<Product, Integer> productCounts = new HashMap<>();
+        double cartTotal = 0;
 
+        for (Product product : cart) {
+            productCounts.put(product, productCounts.getOrDefault(product, 0) + 1);
+            cartTotal += product.getPrice();
+        }
+
+        for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
+            Product product = entry.getKey();
+            int amount = entry.getValue();
+            double totalForProduct = product.getPrice() * amount;
+
+            System.out.printf("Products: %s - Price: %s - Amount: %d; Total: %s%n",
+                    product.getName(),
+                    CurrencyFormatter.formatToVND(product.getPrice()),
+                    amount,
+                    CurrencyFormatter.formatToVND(totalForProduct));
+        }
+
+        System.out.println("Cart total: " + CurrencyFormatter.formatToVND(cartTotal));
+
+        System.out.print("Proceed to checkout? (yes/no): ");
+        String confirm = scanner.nextLine();
+        if (confirm.equalsIgnoreCase("yes")) {
             for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
-                Product product = entry.getKey();
+                Product cartProduct = entry.getKey();
                 int amount = entry.getValue();
-                double totalForProduct = product.getPrice() * amount;
-
-                System.out.printf("Products: %s - Price: %s - Amount: %d; Total: %s%n",
-                        product.getName(),
-                        CurrencyFormatter.formatToVND(product.getPrice()),
-                        amount,
-                        CurrencyFormatter.formatToVND(totalForProduct));
-            }
-
-            System.out.println("Cart total: " + CurrencyFormatter.formatToVND(cartTotal));
-
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Proceed to checkout? (yes/no): ");
-            String confirm = scanner.nextLine();
-            if (confirm.equalsIgnoreCase("yes")) {
-                for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
-                    Product cartProduct = entry.getKey();
-                    int amount = entry.getValue();
-                    Product stockProduct = findProductInStock(cartProduct, mobiles, chargers, mobileCases);
-                    if (stockProduct != null) {
-                        stockProduct.setStock(stockProduct.getStock() - amount);
-                    }
+                Product stockProduct = ProductManagement.findExistingProduct(cartProduct.getId(), mobiles, chargers, mobileCases);
+                if (stockProduct != null) {
+                    stockProduct.setStock(stockProduct.getStock() - amount);
                 }
-                PurchaseHistoryService.addPurchaseToHistory(customer, new ArrayList<>(productCounts.keySet()), cartTotal);
-                System.out.println("Checkout complete. Thank you for your purchase!");
-                cart.clear();
-                FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
-            } else {
-                System.out.println("Checkout canceled.");
             }
+            PurchaseHistoryService.addPurchaseToHistory(customer, new ArrayList<>(productCounts.keySet()), cartTotal);
+            System.out.println("Checkout complete. Thank you for your purchase!");
+            cart.clear();
+            FileService.writeProductsToCSV(mobiles, chargers, mobileCases);
+        } else {
+            System.out.println("Checkout canceled.");
         }
-    }
-
-    private static Product findProductInStock(Product product, ArrayList<Mobile> mobiles, ArrayList<Charger> chargers, ArrayList<MobileCase> mobileCases) {
-        if (product instanceof Mobile) {
-            return MobileService.findMobileById(product.getId(), mobiles);
-        } else if (product instanceof Charger) {
-            return ChargerService.findChargerById(product.getId(), chargers);
-        } else if (product instanceof MobileCase) {
-            return MobileCaseService.findMobileCaseById(product.getId(), mobileCases);
-        }
-        return null;
     }
 }
 
@@ -1169,22 +1162,88 @@ public class ChargerService extends ProductService {
         System.out.println("Charger added successfully.");
     }
 
-    public static void editCharger(Charger charger, Scanner input) {
-        System.out.println("Editing Charger: " + charger.getName());
-        editCommonFields(charger, input);
-        System.out.println("Enter new cable type: ");
-        charger.setCableType(input.nextLine());
-        System.out.println("Enter new cable length: ");
-        charger.setCableLength(input.nextLine());
-    }
+    public static boolean editCharger(Charger charger, Scanner input) {
+        boolean updated = false;
+        while (true) {
+            System.out.println("\nEdit Charger Menu:");
+            System.out.println("1. Edit Name");
+            System.out.println("2. Edit Brand");
+            System.out.println("3. Edit ID");
+            System.out.println("4. Edit Color");
+            System.out.println("5. Edit Price");
+            System.out.println("6. Edit Stock");
+            System.out.println("7. Edit Status");
+            System.out.println("8. Edit Cable Type");
+            System.out.println("9. Edit Cable Length");
+            System.out.println("0. Finish Editing");
+            System.out.print("Enter your choice: ");
 
-    public static Charger findChargerById(String id, ArrayList<Charger> chargers) {
-        for (Charger charger : chargers) {
-            if (charger.getId().equals(id)) {
-                return charger;
+            try {
+                int choice = Integer.parseInt(input.nextLine());
+                switch (choice) {
+                    case 1:
+                        if (editStringField("name", charger.getName(), input)) {
+                            charger.setName(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 2:
+                        if (editStringField("brand", charger.getBrand(), input)) {
+                            charger.setBrand(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 3:
+                        if (editStringField("ID", charger.getId(), input)) {
+                            charger.setId(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 4:
+                        if (editStringField("color", charger.getColor(), input)) {
+                            charger.setColor(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 5:
+                        if (editIntField("price", charger.getPrice(), input)) {
+                            charger.setPrice(Integer.parseInt(input.nextLine().trim()));
+                            updated = true;
+                        }
+                        break;
+                    case 6:
+                        if (editIntField("stock", charger.getStock(), input)) {
+                            charger.setStock(Integer.parseInt(input.nextLine().trim()));
+                            updated = true;
+                        }
+                        break;
+                    case 7:
+                        if (editStringField("status", charger.getStatus(), input)) {
+                            charger.setStatus(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 8:
+                        if (editStringField("cable type", charger.getCableType(), input)) {
+                            charger.setCableType(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 9:
+                        if (editStringField("cable length", charger.getCableLength(), input)) {
+                            charger.setCableLength(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 0:
+                        return updated;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
             }
         }
-        return null;
     }
 }
 
@@ -1354,20 +1413,81 @@ public class MobileCaseService extends ProductService {
         System.out.println("Mobile Case added successfully.");
     }
 
-    public static void editMobileCase(MobileCase mobileCase, Scanner input) {
-        System.out.println("Editing Mobile Case: " + mobileCase.getName());
-        editCommonFields(mobileCase, input);
-        System.out.println("Enter new mobile suit: ");
-        mobileCase.setUseFor(input.nextLine());
-    }
+    public static boolean editMobileCase(MobileCase mobileCase, Scanner input) {
+        boolean updated = false;
+        while (true) {
+            System.out.println("\nEdit Mobile Case Menu:");
+            System.out.println("1. Edit Name");
+            System.out.println("2. Edit Brand");
+            System.out.println("3. Edit ID");
+            System.out.println("4. Edit Color");
+            System.out.println("5. Edit Price");
+            System.out.println("6. Edit Stock");
+            System.out.println("7. Edit Status");
+            System.out.println("8. Edit Use For");
+            System.out.println("0. Finish Editing");
+            System.out.print("Enter your choice: ");
 
-    public static MobileCase findMobileCaseById(String id, ArrayList<MobileCase> mobileCases) {
-        for (MobileCase mobileCase : mobileCases) {
-            if (mobileCase.getId().equals(id)) {
-                return mobileCase;
+            try {
+                int choice = Integer.parseInt(input.nextLine());
+                switch (choice) {
+                    case 1:
+                        if (editStringField("name", mobileCase.getName(), input)) {
+                            mobileCase.setName(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 2:
+                        if (editStringField("brand", mobileCase.getBrand(), input)) {
+                            mobileCase.setBrand(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 3:
+                        if (editStringField("ID", mobileCase.getId(), input)) {
+                            mobileCase.setId(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 4:
+                        if (editStringField("color", mobileCase.getColor(), input)) {
+                            mobileCase.setColor(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 5:
+                        if (editIntField("price", mobileCase.getPrice(), input)) {
+                            mobileCase.setPrice(Integer.parseInt(input.nextLine().trim()));
+                            updated = true;
+                        }
+                        break;
+                    case 6:
+                        if (editIntField("stock", mobileCase.getStock(), input)) {
+                            mobileCase.setStock(Integer.parseInt(input.nextLine().trim()));
+                            updated = true;
+                        }
+                        break;
+                    case 7:
+                        if (editStringField("status", mobileCase.getStatus(), input)) {
+                            mobileCase.setStatus(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 8:
+                        if (editStringField("use for", mobileCase.getUseFor(), input)) {
+                            mobileCase.setUseFor(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 0:
+                        return updated;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
             }
         }
-        return null;
     }
 }
 
@@ -1387,79 +1507,114 @@ public class MobileService extends ProductService {
         System.out.println("Mobile added successfully.");
     }
 
-    public static void editMobile(Mobile mobile, Scanner input) {
-        System.out.println("Editing Mobile: " + mobile.getName());
-        editCommonFields(mobile, input);
-        System.out.println("Enter new OS: ");
-        mobile.setOs(input.nextLine());
-    }
+    public static boolean editMobile(Mobile mobile, Scanner input) {
+        boolean updated = false;
+        while (true) {
+            System.out.println("\nEdit Mobile Menu:");
+            System.out.println("1. Edit Name");
+            System.out.println("2. Edit Brand");
+            System.out.println("3. Edit ID");
+            System.out.println("4. Edit Color");
+            System.out.println("5. Edit Price");
+            System.out.println("6. Edit Stock");
+            System.out.println("7. Edit Status");
+            System.out.println("8. Edit OS");
+            System.out.println("0. Finish Editing");
+            System.out.print("Enter your choice: ");
 
-    public static Mobile findMobileById(String id, ArrayList<Mobile> mobiles) {
-        for (Mobile mobile : mobiles) {
-            if (mobile.getId().equals(id)) {
-                return mobile;
+            try {
+                int choice = Integer.parseInt(input.nextLine());
+                switch (choice) {
+                    case 1:
+                        if (ProductService.editStringField("name", mobile.getName(), input)) {
+                            mobile.setName(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 2:
+                        if (ProductService.editStringField("brand", mobile.getBrand(), input)) {
+                            mobile.setBrand(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 3:
+                        if (ProductService.editStringField("ID", mobile.getId(), input)) {
+                            mobile.setId(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 4:
+                        if (ProductService.editStringField("color", mobile.getColor(), input)) {
+                            mobile.setColor(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 5:
+                        if (ProductService.editIntField("price", mobile.getPrice(), input)) {
+                            mobile.setPrice(Integer.parseInt(input.nextLine().trim()));
+                            updated = true;
+                        }
+                        break;
+                    case 6:
+                        if (ProductService.editIntField("stock", mobile.getStock(), input)) {
+                            mobile.setStock(Integer.parseInt(input.nextLine().trim()));
+                            updated = true;
+                        }
+                        break;
+                    case 7:
+                        if (ProductService.editStringField("status", mobile.getStatus(), input)) {
+                            mobile.setStatus(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 8:
+                        if (ProductService.editStringField("OS", mobile.getOs(), input)) {
+                            mobile.setOs(input.nextLine().trim());
+                            updated = true;
+                        }
+                        break;
+                    case 0:
+                        return updated;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
             }
         }
-        return null;
     }
 }
 
 package Service;
 
-import Entities.Product;
 import java.util.Scanner;
 
 public class ProductService {
+    protected static boolean editStringField(String fieldName, String currentValue, Scanner input) {
+        System.out.print("Enter new " + fieldName + " (or press Enter to skip): ");
+        String newValue = input.nextLine().trim();
+        if (!newValue.isEmpty() && !newValue.equals(currentValue)) {
+            System.out.println(fieldName + " updated successfully.");
+            return true;
+        }
+        return false;
+    }
 
-    protected static void editCommonFields(Product product, Scanner input) {
-        System.out.println("1. Edit Name");
-        System.out.println("2. Edit Brand");
-        System.out.println("3. Edit ID");
-        System.out.println("4. Edit Color");
-        System.out.println("5. Edit Price");
-        System.out.println("6. Edit Stock");
-        System.out.println("7. Edit Status");
-        System.out.println("0. Finish Editing");
-
-        int choice;
-        do {
-            choice = Integer.parseInt(input.nextLine());
-            switch (choice) {
-                case 1:
-                    System.out.println("Enter new name: ");
-                    product.setName(input.nextLine());
-                    break;
-                case 2:
-                    System.out.println("Enter new brand: ");
-                    product.setBrand(input.nextLine());
-                    break;
-                case 3:
-                    System.out.println("Enter new ID: ");
-                    product.setId(input.nextLine());
-                    break;
-                case 4:
-                    System.out.println("Enter new color: ");
-                    product.setColor(input.nextLine());
-                    break;
-                case 5:
-                    System.out.println("Enter new price: ");
-                    product.setPrice(Integer.parseInt(input.nextLine()));
-                    break;
-                case 6:
-                    System.out.println("Enter new stock: ");
-                    product.setStock(Integer.parseInt(input.nextLine()));
-                    break;
-                case 7:
-                    System.out.println("Enter new status: ");
-                    product.setStatus(input.nextLine());
-                    break;
-                case 0:
-                    System.out.println("Finished editing common fields.");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+    protected static boolean editIntField(String fieldName, int currentValue, Scanner input) {
+        System.out.print("Enter new " + fieldName + " (or press Enter to skip): ");
+        String newValue = input.nextLine().trim();
+        if (!newValue.isEmpty()) {
+            try {
+                int intValue = Integer.parseInt(newValue);
+                if (intValue != currentValue) {
+                    System.out.println(fieldName + " updated successfully.");
+                    return true;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
             }
-        } while (choice != 0);
+        }
+        return false;
     }
 }
 
@@ -1561,3 +1716,4 @@ public class PurchaseHistoryService {
         return allHistory;
     }
 }
+
