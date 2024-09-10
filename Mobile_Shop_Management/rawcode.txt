@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 public class Admin {
     private static Admin instance;
@@ -34,7 +34,7 @@ public class Admin {
     }
 }
 
-package Controller;
+package controller;
 
 public class Customer {
     private String username;
@@ -64,7 +64,7 @@ public class Customer {
     }
 }
 
-package Entities;
+package entities;
 
 public class Charger extends Product {
     private String cableType;
@@ -127,7 +127,7 @@ public class Charger extends Product {
     }
 }
 
-package Entities;
+package entities;
 
 public class Mobile extends Product {
     private String os;
@@ -170,7 +170,7 @@ public class Mobile extends Product {
     }
 }
 
-package Entities;
+package entities;
 
 public class MobileCase extends Product {
     private String useFor;
@@ -216,11 +216,11 @@ public class MobileCase extends Product {
     }
 }
 
-package Entities;
+package entities;
 
 import java.util.Objects;
 
-import static Service.CurrencyFormatter.formatToVND;
+import static service.CurrencyFormatter.formatToVND;
 
 public abstract class Product {
     private String name;
@@ -375,10 +375,10 @@ public abstract class Product {
     }
 }
 
-package Factory;
+package factory;
 
-import Entities.Charger;
-import Entities.Product;
+import entities.Charger;
+import entities.Product;
 
 import java.util.Scanner;
 
@@ -400,10 +400,10 @@ public class ChargerFactory extends ProductFactory {
     }
 }
 
-package Factory;
+package factory;
 
-import Entities.MobileCase;
-import Entities.Product;
+import entities.MobileCase;
+import entities.Product;
 
 import java.util.Scanner;
 
@@ -424,10 +424,10 @@ public class MobileCaseFactory extends ProductFactory {
     }
 }
 
-package Factory;
+package factory;
 
-import Entities.Mobile;
-import Entities.Product;
+import entities.Mobile;
+import entities.Product;
 
 import java.util.Scanner;
 
@@ -448,9 +448,9 @@ public class MobileFactory extends ProductFactory {
     }
 }
 
-package Factory;
+package factory;
 
-import Entities.Product;
+import entities.Product;
 
 import java.util.Scanner;
 
@@ -464,18 +464,18 @@ public abstract class ProductFactory {
     }
 }
 
-package Main;
+package main;
 
-import Management.ApplicationManager;
+import management.ApplicationManager;
 
-public class Main {
+public class main {
     public static void main(String[] args) {
         ApplicationManager.run();
     }
 }
 
-package Management;
-import Service.FileService;
+package management;
+import service.FileService;
 
 public class ApplicationManager {
     private static DataManagement dataManagement;
@@ -521,12 +521,12 @@ public class ApplicationManager {
     }
 }
 
-package Management;
+package management;
 
-import Controller.Customer;
-import Entities.Charger;
-import Entities.Mobile;
-import Entities.MobileCase;
+import controller.Customer;
+import entities.Charger;
+import entities.Mobile;
+import entities.MobileCase;
 
 import java.util.ArrayList;
 
@@ -553,12 +553,12 @@ public class DataManagement {
     }
 }
 
-package Management;
+package management;
 
-import Controller.Customer;
-import Entities.Charger;
-import Entities.Mobile;
-import Entities.MobileCase;
+import controller.Customer;
+import entities.Charger;
+import entities.Mobile;
+import entities.MobileCase;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -579,15 +579,15 @@ public class MenuManagement {
     }
 }
 
-package Management;
+package management;
 
-import Controller.Admin;
-import Controller.Customer;
-import Entities.Charger;
-import Entities.Mobile;
-import Entities.MobileCase;
-import Entities.Product;
-import Service.*;
+import controller.Admin;
+import controller.Customer;
+import entities.Charger;
+import entities.Mobile;
+import entities.MobileCase;
+import entities.Product;
+import service.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -842,10 +842,10 @@ public class MenuUI {
     }
 }
 
-package Management;
+package management;
 
-import Entities.*;
-import Service.*;
+import entities.*;
+import service.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1015,14 +1015,14 @@ public class ProductManagement {
     }
 }
 
-package Service;
+package service;
 
-import Controller.Customer;
-import Entities.Product;
-import Entities.Mobile;
-import Entities.Charger;
-import Entities.MobileCase;
-import Management.ProductManagement;
+import controller.Customer;
+import entities.Product;
+import entities.Mobile;
+import entities.Charger;
+import entities.MobileCase;
+import management.ProductManagement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1146,10 +1146,10 @@ public class CartService {
     }
 }
 
-package Service;
+package service;
 
-import Entities.Charger;
-import Factory.ChargerFactory;
+import entities.Charger;
+import factory.ChargerFactory;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -1247,7 +1247,7 @@ public class ChargerService extends ProductService {
     }
 }
 
-package Service;
+package service;
 
 import java.text.DecimalFormat;
 
@@ -1264,9 +1264,9 @@ public class CurrencyFormatter {
 }
 
 
-package Service;
+package service;
 
-import Controller.Customer;
+import controller.Customer;
 import java.util.ArrayList;
 
 public class CustomerService {
@@ -1286,12 +1286,12 @@ public class CustomerService {
     }
 }
 
-package Service;
+package service;
 
-import Controller.Customer;
-import Entities.Mobile;
-import Entities.Charger;
-import Entities.MobileCase;
+import controller.Customer;
+import entities.Mobile;
+import entities.Charger;
+import entities.MobileCase;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -1397,10 +1397,10 @@ public class FileService {
     }
 }
 
-package Service;
+package service;
 
-import Entities.MobileCase;
-import Factory.MobileCaseFactory;
+import entities.MobileCase;
+import factory.MobileCaseFactory;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -1491,10 +1491,10 @@ public class MobileCaseService extends ProductService {
     }
 }
 
-package Service;
+package service;
 
-import Entities.Mobile;
-import Factory.MobileFactory;
+import entities.Mobile;
+import factory.MobileFactory;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -1585,7 +1585,7 @@ public class MobileService extends ProductService {
     }
 }
 
-package Service;
+package service;
 
 import java.util.Scanner;
 
@@ -1618,10 +1618,10 @@ public class ProductService {
     }
 }
 
-package Service;
+package service;
 
-import Controller.Customer;
-import Entities.Product;
+import controller.Customer;
+import entities.Product;
 
 import java.io.*;
 import java.time.LocalDateTime;
